@@ -12,7 +12,7 @@ public class Main {
         List<String> families = Arrays.asList(
                 "Evans", "Young", "Harris", "Wilson", "Davies", "Adamson", "Brown");
         List<Person> persons = new ArrayList<>();
-        for (int i = 0; i < 10_000_000; i++) {
+        for (int i = 0; i < 10; i++) {
             persons.add(new Person(
                     names.get(new Random().nextInt(names.size())),
                     families.get(new Random().nextInt(families.size())),
@@ -28,25 +28,18 @@ public class Main {
         System.out.println(personsBefore18);
 
         List<String> personsForArmy = persons.stream()
+                .filter(s -> s.getSex() == Sex.MAN && s.getAge() >= 18 && s.getAge() <= 27)
                 .map(Person::getFamily)
                 .collect(Collectors.toList());
         System.out.println(personsForArmy);
 
-        List<Person> personsWorkableMan = persons.stream()
-                .filter(sex -> sex.getSex() == Sex.MAN)
-                .filter(age -> age.getAge() >= 18 && age.getAge() < 65)
-                .collect(Collectors.toList());
 
-        List<Person> personsWorkableWoman = persons.stream()
-                .filter(sex -> sex.getSex() == Sex.WOMAN)
-                .filter(age -> age.getAge() >= 18 && age.getAge() < 60)
-                .collect(Collectors.toList());
-
-        List<Person> personList = Stream.of(personsWorkableWoman, personsWorkableMan)
-                .flatMap(List::stream)
-                .filter(ed -> ed.getEducation() == Education.HIGHER)
+        List<Person> personsWorkable = persons.stream()
+                .filter(person -> (person.getSex() == Sex.MAN && person.getAge() >= 18 && person.getAge() <= 65) ||
+                        (person.getSex() == Sex.WOMAN && person.getAge() >= 18 && person.getAge() <= 60))
+                .filter(p->p.getEducation()==Education.HIGHER)
                 .sorted(Comparator.comparing(Person::getFamily))
                 .collect(Collectors.toList());
-        System.out.println(personList);
+        System.out.println(personsWorkable);
     }
 }
